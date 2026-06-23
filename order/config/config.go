@@ -23,6 +23,10 @@ func GetAplicationPort() int {
 	return port
 }
 
+func getPaymentServiceUrl() string {
+	return getEnviromentValue("PAYMENT_SERVICE_URL")
+}
+
 func getEnviromentValue(key string) string {
 	if os.Getenv(key) == "" {
 		log.Fatalf("Environment variable %s is not set", key)

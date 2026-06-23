@@ -16,7 +16,13 @@ func main () {
 	if err != nil {
 	log . Fatalf (" Failed to connect to database . Error : %v", err )
 	}
-	application := api . NewApplication ( dbAdapter )
+	paymentAdapter, err := payment_adapter.NewAdapter(config.GetPaymentServiceUrl())
+	if err != nil {
+		log.Fatalf("Failed to connect to payment service. Error: %v", err)
+
+	}
+	
+	application := api . NewApplication ( dbAdapter , paymentAdapter )
 	grpcAdapter := grpc . NewAdapter ( application , config . GetApplicationPort () )
 	grpcAdapter . Run ()
 }
