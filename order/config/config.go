@@ -3,19 +3,19 @@ package config
 import(
 	"log"
 	"os"
-	"string"
+	"strconv"
 )
 
 func GetEnv() string {
 	return getEnviromentValue("ENV")
 }
 
-func GetSourceUrl() string {
+func GetDataSourceURL() string {
 	return getEnviromentValue("DATA_SOURCE_URL")
 }
 
-func GetAplicationPort() int {
-	portStr := getEnviromentValue("APLICATION_PORT")
+func GetApplicationPort() int {
+	portStr := getEnviromentValue("APPLICATION_PORT")
 	port, err := strconv.Atoi(portStr)
 	if err != nil {
 		log.Fatalf("Failed to parse application port: %v", err)
@@ -23,7 +23,7 @@ func GetAplicationPort() int {
 	return port
 }
 
-func getPaymentServiceUrl() string {
+func GetPaymentServiceUrl() string {
 	return getEnviromentValue("PAYMENT_SERVICE_URL")
 }
 
@@ -33,4 +33,3 @@ func getEnviromentValue(key string) string {
 	}
 	return os.Getenv(key)
 }
-

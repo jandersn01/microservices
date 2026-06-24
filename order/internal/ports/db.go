@@ -1,6 +1,6 @@
 package ports
 
-import "https://github.com/jandersn01/microservices/order/internal/application/core/domain"
+import "github.com/jandersn01/microservices/order/internal/application/core/domain"
 
 type DBPort interface {
 	Get(id string) (*domain.Order, error)

@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-
 	"github.com/jandersn01/microservices/order/internal/application/core/domain"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -10,14 +9,14 @@ import (
 
 type Order struct {
 	gorm.Model
-	CustumerID int64
+	CustomerID int64
 	Status     string
 	OrderItems []OrderItem
 }
 
 type OrderItem struct {
 	gorm.Model
-	ProcuctCode string
+	ProductCode string
 	UnitPrice   float32
 	Quantity    int32
 	OrderID     uint
@@ -32,46 +31,45 @@ func NewAdapter(dataSourceUrl string) (*Adapter, error) {
 	if openErr != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", openErr)
 	}
-	err db.AutoMigrate(&Order{}, &OrderItem{})
+	err := db.AutoMigrate(&Order{}, &OrderItem{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to migrate database: %w", err)
 	}
 	return &Adapter{db: db}, nil
 }
 
-
-func (a Adpater) Get(id string) (domain.Order, error) {
+func (a Adapter) Get(id string) (*domain.Order, error) {
 	var orderEntity Order
 	res := a.db.First(&orderEntity, id)
 	var orderItems []domain.OrderItem
 	for _, orderItemEntity := range orderEntity.OrderItems {
 		orderItems = append(orderItems, domain.OrderItem{
-			ProductCode: orderItemEntity.ProcuctCode,
+			ProductCode: orderItemEntity.ProductCode,
 			UnitPrice:   orderItemEntity.UnitPrice,
 			Quantity:    orderItemEntity.Quantity,
 		})
 	}
 	order := domain.Order{
 		ID:         int64(orderEntity.ID),
-		CustumerID: orderEntity.CustumerID,
+		CustomerID: orderEntity.CustomerID,
 		Status:     orderEntity.Status,
 		OrderItems: orderItems,
 		CreatedAt:  orderEntity.CreatedAt.UnixNano(),
 	}
-	return order, res.Error
+	return &order, res.Error
 }
 
 func (a Adapter) Save(order *domain.Order) error {
 	var orderItems []OrderItem
 	for _, orderItem := range order.OrderItems {
 		orderItems = append(orderItems, OrderItem{
-			ProcuctCode: orderItem.ProductCode,
+			ProductCode: orderItem.ProductCode,
 			UnitPrice:   orderItem.UnitPrice,
 			Quantity:    orderItem.Quantity,
 		})
 	}
 	orderModel := Order{
-		CustumerID: order.CustumerID,
+		CustomerID: order.CustomerID,
 		Status:     order.Status,
 		OrderItems: orderItems,
 	}
@@ -81,4 +79,3 @@ func (a Adapter) Save(order *domain.Order) error {
 	}
 	return res.Error
 }
-
