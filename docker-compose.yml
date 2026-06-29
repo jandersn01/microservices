@@ -5,8 +5,48 @@ services:
     container_name: microservices_mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: minhasenha
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  payment:
+    build:
+      context: ../
+      dockerfile: microservices/payment/Dockerfile
+    container_name: microservices_payment
+    environment:
+      - DB_DRIVER=${DB_DRIVER}
+      - DATA_SOURCE_URL=${DB_USER}:${DB_PASSWORD}@tcp(mysql:3306)/payment?parseTime=true
+      - APPLICATION_PORT=${PAYMENT_PORT}
+      - ENV=${APP_ENV}
+    ports:
+      - "${PAYMENT_PORT}:${PAYMENT_PORT}"
+    depends_on:
+      - mysql
+
+  order:
+    build:
+      context: ../
+      dockerfile: microservices/order/Dockerfile
+    container_name: microservices_order
+    environment:
+      - DB_DRIVER=${DB_DRIVER}
+      - DATA_SOURCE_URL=${DB_USER}:${DB_PASSWORD}@tcp(mysql:3306)/order?parseTime=true
+      - APPLICATION_PORT=${ORDER_PORT}
+      - PAYMENT_SERVICE_URL=payment:${PAYMENT_PORT}
+      - ENV=${APP_ENV}
+    ports:
+      - "${ORDER_PORT}:${ORDER_PORT}"
+    depends_on:
+      - mysql
+      - payment
+
+  cliente:
+    build:
+      context: ../
+      dockerfile: microservices/cliente/Dockerfile
+    container_name: microservices_cliente
+    depends_on:
+      - order

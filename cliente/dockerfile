@@ -1,0 +1,15 @@
+FROM golang:alpine AS builder
+WORKDIR /app
+
+# Copia o projeto inteiro de uma vez, mantendo a estrutura exata do Windows
+COPY . .
+
+WORKDIR /app/microservices/cliente
+RUN go mod tidy
+RUN go build -o cliente_app cmd/main.go
+
+FROM alpine:latest
+WORKDIR /root/
+
+COPY --from=builder /app/microservices/cliente/cliente_app .
+CMD ["./cliente_app"]
