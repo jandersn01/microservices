@@ -1,6 +1,6 @@
 module github.com/jandersn01/microservices/order
 
-go 1.26.1
+go 1.24.5
 
 require (
 	github.com/jandersn01/microservices-proto/golang/order v0.0.0-00010101000000-000000000000

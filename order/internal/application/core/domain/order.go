@@ -32,3 +32,11 @@ func (o *Order) TotalPrice() float32 {
 	}
 	return totalPrice
 }
+
+func (o *Order) TotalItems() int32{
+	var totalQuantity int32
+	for _, orderItem := range o.OrderItems {
+		totalQuantity += orderItem.Quantity
+	}
+	return totalQuantity
+}

@@ -15,12 +15,14 @@ func (a Adapter) Create(ctx context.Context, request *payment.CreatePaymentReque
 	log.WithContext(ctx).Info("Creating payment...")
 
 	newPayment := domain.NewPayment(request.UserId, request.OrderId, request.TotalPrice)
+
 	result, err := a.api.Charge(ctx, newPayment)
-	code := status.Code(err)
-	if code == codes.InvalidArgument {
-		return nil, err
-	} else if err != nil {
-		return nil, status.New(codes.Internal, fmt.Sprintf("failed to charge. %v ", err)).Err()
+
+	if err != nil {
+		if err.Error() == "payment over 1000 is not allowed"{
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to charge: %v", err))
 	}
-	return &payment.CreatePaymentResponse{PaymentId: result.ID}, nil
+		return &payment.CreatePaymentResponse{PaymentId: result.ID}, nil
 }

@@ -12,6 +12,8 @@ import (
 	"google.golang.org/grpc"
 	"github.com/jandersn01/microservices/order/config"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Adapter struct {
@@ -38,9 +40,17 @@ func (a Adapter) Create(ctx context.Context, request *order.CreateOrderRequest) 
 	}
 
 	newOrder := domain.NewOrder(int64(request.CustomerId), orderItems)
+	
+	if newOrder.TotalItems() > 50 {
+		return nil, status.Error(codes.InvalidArgument, "I's not allowed more then 50 items per order")
+	}
+	
 	result, err := a.app.PlaceOrder(newOrder)
 	if err != nil {
-		return nil, err
+		if _, ok := status.FromError(err); ok {
+			return nil, err 
+		}
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to place order: %v", err))
 	}
 	return &order.CreateOrderResponse{
 		OrderId: int32(result.ID),

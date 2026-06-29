@@ -29,6 +29,7 @@ func (a *Adapter) Charge(order *domain.Order) error {
 		UserId: order.CustomerID,
 		OrderId: order.ID,
 		TotalPrice: order.TotalPrice(),
+
 	})
 	return err	
 }

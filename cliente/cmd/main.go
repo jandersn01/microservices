@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// 1. Conecta no microsserviço Order (porta 3000)
-	conn, err := grpc.Dial("localhost:3000", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("order:3000", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Falha ao conectar no Order: %v", err)
 	}

@@ -1,6 +1,6 @@
 module client
 
-go 1.26.1
+go 1.24.5
 
 replace github.com/jandersn01/microservices-proto/golang/order => ../../microservices-proto/golang/order
 
