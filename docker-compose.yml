@@ -37,6 +37,7 @@ services:
       - APPLICATION_PORT=${ORDER_PORT}
       - PAYMENT_SERVICE_URL=payment:${PAYMENT_PORT}
       - ENV=${APP_ENV}
+      - SHIPPING_SERVICE_URL=shipping:${SHIPPING_PORT}
     ports:
       - "${ORDER_PORT}:${ORDER_PORT}"
     depends_on:
@@ -57,8 +58,8 @@ services:
       dockerfile: microservices/shipping/Dockerfile
     container_name: microservices_shipping
     environment:
-      - DB_DRIVER=${DB_DRIVER}
-      - DATA_SOURCE_URL=${DB_USER}:${DB_PASSWORD}@tcp(mysql:3306)/shipping?parseTime=true
+      # - DB_DRIVER=${DB_DRIVER}
+      # - DATA_SOURCE_URL=${DB_USER}:${DB_PASSWORD}@tcp(mysql:3306)/shipping?parseTime=true
       - APPLICATION_PORT=${SHIPPING_PORT}
       - ENV=${APP_ENV}
     ports:

@@ -10,7 +10,7 @@ FROM alpine:latest
 WORKDIR /root/
 
 # Variáveis de ambiente
-ENV DB_DRIVER=mysql
+# ENV DB_DRIVER=mysql
 ENV APPLICATION_PORT=3003
 ENV ENV=development
 
